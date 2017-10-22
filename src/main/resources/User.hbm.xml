@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 17, 2015 11:44:47 AM by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+    <filter-def name="nameFilter" condition="name like :name">
+        <filter-param name="name" type="string"/>
+    </filter-def>
+
+    <class name="User" table="USERS">
+        <id name="id" type="int">
+            <column name="ID"/>
+            <generator class="identity"/>
+        </id>
+        <property name="name" type="java.lang.String">
+            <column name="NAME"/>
+        </property>
+        <one-to-one name="proteinData" class="ProteinData" cascade="save-update"/>
+
+       <!-- <component name="proteinData">
+            <property name="total" type="int">
+                <column name="TOTAL"/>
+            </property>
+            <property name="goal" type="int">
+                <column name="GOAL"/>
+            </property>
+        </component>-->
+
+       <!-- <set name="history" table="User_History">
+            <key column="ID"/>
+            <composite-element class="UserHistory">
+                <property name="entryTime" type="date" column="ENTRY_TIME"/>
+                <property name="entry" type="string" column="ENTRY"/>
+            </composite-element>
+        </set>-->
+
+        <!--  <idbag name="historyCollection" table="History_COL">
+              <collection-id column="ID" type="int">
+                  <generator class="increment"></generator>
+              </collection-id>
+              <key column="USER_ID"></key>
+              <composite-element class="UserHistory">
+                  <property name="entryTime" type="date" column="ENTRY_TIME"/>
+                  <property name="entry" type="string" column="ENTRY"/>
+              </composite-element>
+          </idbag>-->
+
+        <!--cascade : When we save user it going to save history as well-->
+        <list name="history" table="USER_HISTORY" inverse="true" cascade="save-update">
+            <key column="USER_ID"></key>
+            <list-index column="POSITION"/>
+            <one-to-many class="UserHistory"/>
+        </list>
+        
+       <!-- <join table="USER_GOALALERT" optional="true" >
+            <key column="USER_ID"/>
+            <many-to-one name="goalAlert" column="GOALALERT_ID" not-null="false" unique="true" cascade="save-update"/>
+        </join>-->
+
+        <set name="goalAlerts" table="USER_GOALALERTOTOM" cascade="save-update">
+            <key column="USER_ID"/>
+            <many-to-many class="GoalAlertOToM" column="GOALALERT_ID"/>
+        </set>
+        <filter name="nameFilter"/>
+    </class>
+</hibernate-mapping>
